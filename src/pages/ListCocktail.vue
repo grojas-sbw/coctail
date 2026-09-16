@@ -129,7 +129,7 @@
 
 <script setup>
 import { reactive, ref } from 'vue';
-import { cocktails } from '@/data/cocktails';
+import { cocktails, difficultyOrder } from '@/data/cocktails';
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -156,8 +156,6 @@ const filterSelected = reactive({
 
 const filterSearch = ref('');
 const searchIngredientsList = ref([]);
-
-
 
 /**
  * Filtra la lista de cócteles según el texto ingresado en el buscador.
@@ -280,6 +278,11 @@ const doFilter = (filterType) => {
   }
   else if (filterType === 'numberIngredients'){
 
+  }
+  else if (filterType === 'difficulty'){
+    cocktailList.value.sort((a, b) =>
+      difficultyOrder[a.difficulty] - difficultyOrder[b.difficulty]
+    )
   }
 }
 

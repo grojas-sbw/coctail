@@ -194,3 +194,9 @@ export const cocktails = [
     }
   }
 ];
+
+export const difficultyOrder = {
+  'Fácil': 1,
+  'Media': 2,
+  'Difícil': 3
+}

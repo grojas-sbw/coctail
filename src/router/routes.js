@@ -3,8 +3,9 @@ const routes = [
     path: '/',
     component: () => import('@/layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('@/pages/IndexPage.vue') },
-      { path: 'second', component: () => import('@/pages/SecondPage.vue') }
+      { path: '', component: () => import('@/pages/ListCocktail.vue') },
+      { path: 'createCocktail', component: () => import('@/pages/CreateCocktail.vue') },
+      { path: 'viewCocktail/:id', component: () => import('@/pages/ViewCocktail.vue') }
     ]
   },
 

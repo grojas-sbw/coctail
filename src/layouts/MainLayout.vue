@@ -2,22 +2,28 @@
   <q-layout view="lHh Lpr lFf">
     <q-header elevated>
       <q-toolbar>
-        <q-btn
+       <q-btn
+        v-if="$route.path !== '/'"
+        flat
+        round
+        dense
+        icon="arrow_back"
+        to="/"/>
+
+        <q-toolbar-title> {{ $route.path === '/' ? 'Principal' : 'Detalle del cocktail' }} </q-toolbar-title>
+
+        <!-- <div>Quasar v{{ $q.version }}</div> -->
+         <q-btn
+          v-if="$route.path === '/createCocktail'"
           flat
-          dense
           round
-          icon="menu"
-          aria-label="Menu"
-          @click="toggleLeftDrawer"
-        />
-
-        <q-toolbar-title> Quasar App </q-toolbar-title>
-
-        <div>Quasar v{{ $q.version }}</div>
+          dense
+          icon="check"
+          @click="onCompleteCreateCocktail"/>
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
+    <!-- <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
       <q-list>
         <q-item-label header> Essential Links </q-item-label>
 
@@ -27,7 +33,7 @@
           v-bind="link"
         />
       </q-list>
-    </q-drawer>
+    </q-drawer> -->
 
     <q-page-container>
       <router-view />
@@ -37,6 +43,7 @@
 
 <script setup>
 import { ref } from 'vue'
+import { completeEvent } from '../eventBus'
 import EssentialLink from '@/components/EssentialLink.vue'
 
 const linksList = [
@@ -83,6 +90,10 @@ const linksList = [
     link: 'https://awesome.quasar.dev'
   }
 ]
+
+function onCompleteCreateCocktail() {
+  completeEvent.value?.();
+}
 
 const leftDrawerOpen = ref(false)
 

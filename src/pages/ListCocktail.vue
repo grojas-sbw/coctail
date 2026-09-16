@@ -268,21 +268,17 @@ const doFilter = (filterType) => {
     cocktailList.value.sort((a,b) =>  a.name.localeCompare(b.name));
   }
   else if (filterType === 'ingredients'){
-     cocktailList.value = cocktailList.value.filter(cocktail =>
+    cocktailList.value = cocktailList.value.filter(cocktail =>
       searchIngredientsList.value.every(ingredientToSearch =>
         cocktail.ingredients.some(ingredient =>
           ingredient.name.toLowerCase().includes(ingredientToSearch.toLowerCase())
-        )
-      )
-    );
+    )));
   }
   else if (filterType === 'numberIngredients'){
-
+    cocktailList.value.sort((a, b) => a.ingredients.length - b.ingredients.length);
   }
   else if (filterType === 'difficulty'){
-    cocktailList.value.sort((a, b) =>
-      difficultyOrder[a.difficulty] - difficultyOrder[b.difficulty]
-    )
+    cocktailList.value.sort((a, b) => difficultyOrder[a.difficulty] - difficultyOrder[b.difficulty]);
   }
 }
 

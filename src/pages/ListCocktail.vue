@@ -97,7 +97,7 @@
 
     <div class="row q-pa-xs q-col-gutter-xs">
       <div class="col-6" v-for="cocktail in cocktailList">
-        <q-card class="cocktail-card">
+        <q-card class="cocktail-card" @click="onViewCocktail(cocktail.id)">
           <q-img src="~@/assets/cocktail-default.jfif" />
           <q-card-section class="cocktail-content">
             <div class="text-h6">{{ cocktail.name }}</div>

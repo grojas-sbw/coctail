@@ -21,7 +21,6 @@
       <q-img src="~@/assets/cocktail.png" width="30px" height="30px"/>
     </div>
 
-
     <div class="search-container q-px-xs q-pb-xs">
       <div class="row items-center">
         <div class="col-10">
@@ -51,77 +50,86 @@
       </div>
     </div>
 
-    <div>
-      <q-dialog v-model="modalFilter" @hide="OnHideModalFilter">
-        <q-card>
-          <q-card-section>
-            <div class="text-h6">Filtro de busqueda</div>
-          </q-card-section>
+    <div v-if="cocktailList.length > 0">
 
-          <q-card-section class="q-pt-none">
-            <q-chip v-for="filterName in Object.keys(filters)"
-              v-model:selected="filters[filterName].value"
-              color="primary"
-              text-color="white"
-              @update:selected="state => onUpdateChip(filterName, state)">
-              {{ filters[filterName].label }}
-            </q-chip>
+      <div>
+        <q-dialog v-model="modalFilter" @hide="OnHideModalFilter">
+          <q-card>
+            <q-card-section>
+              <div class="text-h6">Filtro de busqueda</div>
+            </q-card-section>
 
-            <div class="row items-center q-col-gutter-xs q-pt-xs" v-if="filterSelected.key === 'ingredients'">
-              <div class="col-10">
-                <q-input
-                  color="primary" outlined v-model="filterSearch" type="search" label="Busqueda ingredientes">
-                </q-input>
-              </div>
-              <div class="col-2">
-                <q-btn push color="primary" round icon="search" @click="onAddIngredientToSearch"/>
-              </div>
-            </div>
-            <div class="row">
-              <q-chip v-for="ingredient in searchIngredientsList"
-                removable
+            <q-card-section class="q-pt-none">
+              <q-chip v-for="filterName in Object.keys(filters)"
+                v-model:selected="filters[filterName].value"
                 color="primary"
                 text-color="white"
-                @remove="onRemoveSearchFilter(ingredient)">
-                {{ ingredient }}
+                @update:selected="state => onUpdateChip(filterName, state)">
+                {{ filters[filterName].label }}
               </q-chip>
-            </div>
-          </q-card-section>
 
-          <q-card-actions align="right">
-            <q-btn flat label="Filtrar" color="primary" v-close-popup @click="onCloseFilterDialog" />
-          </q-card-actions>
-        </q-card>
-      </q-dialog>
+              <div class="row items-center q-col-gutter-xs q-pt-xs" v-if="filterSelected.key === 'ingredients'">
+                <div class="col-10">
+                  <q-input
+                    color="primary" outlined v-model="filterSearch" type="search" label="Busqueda ingredientes">
+                  </q-input>
+                </div>
+                <div class="col-2">
+                  <q-btn push color="primary" round icon="search" @click="onAddIngredientToSearch"/>
+                </div>
+              </div>
+              <div class="row">
+                <q-chip v-for="ingredient in searchIngredientsList"
+                  removable
+                  color="primary"
+                  text-color="white"
+                  @remove="onRemoveSearchFilter(ingredient)">
+                  {{ ingredient }}
+                </q-chip>
+              </div>
+            </q-card-section>
+
+            <q-card-actions align="right">
+              <q-btn flat label="Filtrar" color="primary" v-close-popup @click="onCloseFilterDialog" />
+            </q-card-actions>
+          </q-card>
+        </q-dialog>
+      </div>
+
+      <div class="row q-pa-xs q-col-gutter-xs">
+        <div class="col-6" v-for="cocktail in cocktailList">
+          <q-card class="cocktail-card" @click="onViewCocktail(cocktail.id)">
+            <q-img src="~@/assets/cocktail-default.jfif" />
+            <q-card-section class="cocktail-content">
+              <div class="text-h6">{{ cocktail.name }}</div>
+              <div class="text-caption text-gray">{{ cocktail.difficulty }}</div>
+              <div class="row items-center">
+                <q-rating v-model="cocktail.rating" :max="5" size="16px" readonly />
+                <span class="text-caption q-ml-sm">({{ cocktail.rating }})</span>
+              </div>
+              <div class="text-body2">{{ cocktail.description }}</div>
+            </q-card-section>
+
+            <q-separator inset />
+
+             <q-card-actions align="left">
+               <q-btn color="secondary" label="Detalles" @click="onViewCocktail(cocktail.id)"/>
+             </q-card-actions>
+
+          </q-card>
+        </div>
+      </div>
+
     </div>
 
-    <div class="row q-pa-xs q-col-gutter-xs">
-      <div class="col-6" v-for="cocktail in cocktailList">
-        <q-card class="cocktail-card" @click="onViewCocktail(cocktail.id)">
-          <q-img src="~@/assets/cocktail-default.jfif" />
-          <q-card-section class="cocktail-content">
-            <div class="text-h6">{{ cocktail.name }}</div>
-            <div class="text-caption text-gray">{{ cocktail.difficulty }}</div>
-            <div class="row items-center">
-              <q-rating v-model="cocktail.rating" :max="5" size="16px" readonly />
-              <span class="text-caption q-ml-sm">({{ cocktail.rating }})</span>
-            </div>
-            <div class="text-body2">{{ cocktail.description }}</div>
-          </q-card-section>
-
-          <q-separator inset />
-
-           <q-card-actions align="left">
-             <q-btn color="secondary" label="Detalles" @click="onViewCocktail(cocktail.id)"/>
-           </q-card-actions>
-
-        </q-card>
-      </div>
+    <div class="row justify-center" v-if="cocktailList.length === 0">
+      <span class="text-h5">¡ Ups ! No se encuentra lo que buscas</span>
     </div>
 
     <q-page-sticky position="bottom-right" :offset="offsetAddBtn">
       <q-btn fab icon="add" color="secondary" to="/createCocktail" />
     </q-page-sticky>
+
 
   </q-page>
 
@@ -131,6 +139,7 @@
 import { reactive, ref } from 'vue';
 import { cocktails, difficultyOrder } from '@/data/cocktails';
 import { useRouter } from 'vue-router'
+import { normalize } from '@/utils';
 
 const router = useRouter()
 const search = ref('');
@@ -171,9 +180,8 @@ const onSearch = (value) => {
 
   // Filtra los cócteles cuyo nombre contiene el texto buscado.
   cocktailList.value = cocktails.filter(item =>
-    item.name.toLowerCase().includes(
-      value.toString().toLowerCase()
-    )
+    normalize(item.name).includes(normalize(value)) ||
+      item.ingredients.some(item => normalize(item.name).includes(normalize(value)))
   );
 
   // Si existe un filtro seleccionado, se aplica sobre los resultados.
@@ -271,7 +279,7 @@ const doFilter = (filterType) => {
     cocktailList.value = cocktailList.value.filter(cocktail =>
       searchIngredientsList.value.every(ingredientToSearch =>
         cocktail.ingredients.some(ingredient =>
-          ingredient.name.toLowerCase().includes(ingredientToSearch.toLowerCase())
+          normalize(ingredient.name).includes(normalize(ingredientToSearch))
     )));
   }
   else if (filterType === 'numberIngredients'){
